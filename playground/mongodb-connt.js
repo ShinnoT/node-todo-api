@@ -8,12 +8,25 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (error, dbObject) => {
   }
 
   const myDB = dbObject.db('TodoApp');
-  myDB.collection('Todos').insertOne({
-    text: 'something to do',
-    completed: false
+
+  // myDB.collection('Todos').insertOne({
+  //   text: 'something to do',
+  //   completed: false
+  // }, (error, result) => {
+  //   if (error) {
+  //     console.log('unable to insert todo');
+  //   } else {
+  //     console.log(JSON.stringify(result.ops, undefined, 2));
+  //   }
+  // });
+
+  myDB.collection('Users').insertOne({
+    name: 'shinno',
+    age: 25,
+    location: 'Japan'
   }, (error, result) => {
     if (error) {
-      console.log('unable to insert todo');
+      console.log('unable to insert user');
     } else {
       console.log(JSON.stringify(result.ops, undefined, 2));
     }
