@@ -25,18 +25,39 @@ let Todo = mongoose.model('Todo', {
   }
 });
 
-
-//create new instance of model
-let newTodo = new Todo({
-  text: 'cook dinner',
-  completed: false,
+let User = mongoose.model('User', {
+  email: {
+    type: String,
+    required: true,
+    minLength: 1,
+    trim: true
+  }
 });
 
-//creating new instance of a model alone does not insert in into DB
-//we must use the save function
-newTodo.save().then((doc) => {
-  console.log('saved todo task');
+
+// //create new instance of model
+// let newTodo = new Todo({
+//   text: 'cook dinner',
+//   completed: false,
+// });
+
+// //creating new instance of a model alone does not insert in into DB
+// //we must use the save function
+// newTodo.save().then((doc) => {
+//   console.log('saved todo task');
+//   console.log(doc);
+// }, (error) => {
+//   console.log('unable to save todo task', error);
+// });
+
+
+let newUser = new User({
+  email: 'blah@hhhhhhhh.cmo'
+});
+
+newUser.save().then((doc) => {
+  console.log('user saved');
   console.log(doc);
 }, (error) => {
-  console.log('unable to save todo task', error);
+  console.log('unable to save', error);
 });
