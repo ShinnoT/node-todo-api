@@ -1,38 +1,39 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp');
 
+const {mongoose} = require('./db/mongoose');
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
+
+
+let app = express();
+
+
+
+
+app.listen(3000, () => {
+  console.log('started on port 3000');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//--------------------------------------------
 //model validations
-let Todo = mongoose.model('Todo', {
-  text: {
-    //even if type is String, if you put boolean or number when
-    //creating new instance, it will still work because it will wrap input in quotes
-    //something to be cautious of
-    type: String,
-    required: true,
-    minLength: 1,
-    //trim will trim trailing and preceeding white spaces
-    trim: true
-  },
-  completed: {
-    type: Boolean,
-    default: false
-  },
-  completedAt: {
-    type: Number,
-    default: null
-  }
-});
+//moved to separate files in models folder
 
-let User = mongoose.model('User', {
-  email: {
-    type: String,
-    required: true,
-    minLength: 1,
-    trim: true
-  }
-});
+
 
 
 // //create new instance of model
@@ -51,13 +52,13 @@ let User = mongoose.model('User', {
 // });
 
 
-let newUser = new User({
-  email: 'blah@hhhhhhhh.cmo'
-});
+// let newUser = new User({
+//   email: 'blah@hhhhhhhh.cmo'
+// });
 
-newUser.save().then((doc) => {
-  console.log('user saved');
-  console.log(doc);
-}, (error) => {
-  console.log('unable to save', error);
-});
+// newUser.save().then((doc) => {
+//   console.log('user saved');
+//   console.log(doc);
+// }, (error) => {
+//   console.log('unable to save', error);
+// });
