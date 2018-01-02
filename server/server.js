@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
 
 const {mongoose} = require('./db/mongoose');
@@ -37,6 +38,24 @@ app.get('/todos', (request, response) => {
     response.status(400).send(error);
   });
 });
+
+
+//show in rails
+app.get('/todos/:id', (request, response) => {
+  let id = request.params.id;
+  if (!ObjectID.isValid(id)) {
+    response.send(404).send();
+  }
+  Todo.findById(id).then((todo) => {
+    if (!todo) {
+      return response.send(404).send();
+    }
+    response.send({todo});
+  }).catch((error) => {
+    response.status(400).send();
+  });
+});
+
 
 app.listen(3000, () => {
   console.log('started on port 3000');
