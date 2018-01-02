@@ -11,6 +11,7 @@ let app = express();
 
 app.use(bodyParser.json());
 
+//create in rails
 app.post('/todos', (request, response) => {
   // console.log(request.body);
   let todo = new Todo({
@@ -24,6 +25,18 @@ app.post('/todos', (request, response) => {
   });
 });
 
+//index in rails
+app.get('/todos', (request, response) => {
+  Todo.find().then((todos) => {
+    // response.send(todos);
+    // the above code works but it will return an array of todos
+    // by explicitly returning an object it will be more customizable later
+    // thus:
+    response.send({todos});
+  }, (error) => {
+    response.status(400).send(error);
+  });
+});
 
 app.listen(3000, () => {
   console.log('started on port 3000');
