@@ -9,6 +9,7 @@ const _ = require('lodash');
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
+const {authenticate} = require('./middleware/authenticate');
 
 
 let app = express();
@@ -107,6 +108,7 @@ app.patch('/todos/:id', (request, response) => {
 
 
 //user authentication--------------
+//sign-up
 app.post('/users', (request, response) => {
   let body = _.pick(request.body, ['email', 'password']);
   let user = new User(body);
@@ -121,6 +123,13 @@ app.post('/users', (request, response) => {
   });
 });
 
+
+//sign-in
+//using middleware function called authenticate
+//./middleware/authenticate.js
+app.get('/users/me', authenticate, (request, response) => {
+  response.send(request.user);
+});
 
 app.listen(port, () => {
   console.log(`started app on port ${port}`);

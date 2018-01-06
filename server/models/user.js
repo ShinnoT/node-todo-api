@@ -38,6 +38,8 @@ let UserSchema = new mongoose.Schema({
 
 // creating instance methods
 // using es5 function syntax because we want to use 'this'
+
+//this is overriding the toJSON function which is called automatiacally?
 UserSchema.methods.toJSON = function () {
   let user = this;
   let userObject = user.toObject();
@@ -54,6 +56,28 @@ UserSchema.methods.generateAuthToken = function () {
   user.tokens.push({access, token});
   return user.save().then(() => {
     return token;
+  });
+};
+
+// .statics is for model methods where as .methods is for intstance methods
+UserSchema.statics.findByToken = function (token) {
+  let User = this;
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, 'abc123');
+  } catch(e) {
+    // return new Promise((resolve, reject) => {
+    //   reject();
+    // });
+    // simpler way of dong the above:
+    return Promise.reject();
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
   });
 };
 
