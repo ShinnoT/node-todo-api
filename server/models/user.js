@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 let UserSchema = new mongoose.Schema({
   email: {
@@ -80,6 +81,23 @@ UserSchema.statics.findByToken = function (token) {
     'tokens.access': 'auth'
   });
 };
+
+//.pre is for methods that are suppose to run before you, in this case save, your instance to DB
+UserSchema.pre('save', function (next) {
+  user = this;
+
+  if (user.isModified('password')) {
+    // only encrypt password if its modified meaning if it was changed by user upon initial sign up or updating password
+    bcrypt.genSalt(10, (error, salt) => {
+      bcrypt.hash(user.password, salt, (error, hash) => {
+        user.password = hash;
+        next();
+      });
+    });
+  } else {
+    next();
+  }
+});
 
 let User = mongoose.model('User', UserSchema);
 

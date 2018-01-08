@@ -27,16 +27,39 @@
 
 
 //however JSON web tokens does all of this for you
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 
-let data = {
-  id: 10
-};
+// let data = {
+//   id: 10
+// };
 
 
-let token = jwt.sign(data, '123abc');
-console.log(token);
+// let token = jwt.sign(data, '123abc');
+// console.log(token);
 
-let decoded = jwt.verify(token, '123abc');
-console.log(decoded);
+// let decoded = jwt.verify(token, '123abc');
+// console.log(decoded);
+
+
+
+
+
+
+
+// salting passwords
+const bcrypt = require('bcryptjs');
+
+let password = '123456';
+
+bcrypt.genSalt(10, (error, salt) => {
+  bcrypt.hash(password, salt, (error, hash) => {
+    console.log(hash);
+  });
+});
+
+let hashedPassword = '$2a$10$XLdmTf.q19m.ZMIcxiv2FevU8kamxNu6IU4OjsVaDdqpYB.rErYhW';
+
+bcrypt.compare('123', hashedPassword, (error, result) => {
+  console.log(result);
+});
