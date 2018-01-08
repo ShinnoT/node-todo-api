@@ -146,6 +146,16 @@ app.post('/users/login', (request, response) => {
   });
 });
 
+//log-out
+//doing this by deleting token
+app.delete('/users/me/token', authenticate, (request, response) => {
+  request.user.removeToken(request.token).then(() => {
+    response.status(200).send();
+  }).catch((error) => {
+    response.status(400).send();
+  });
+});
+
 
 
 

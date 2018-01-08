@@ -60,6 +60,17 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+UserSchema.methods.removeToken = function (token) {
+  let user = this;
+  return user.update({
+    $pull: {
+      tokens: {
+        token: token
+      }
+    }
+  });
+};
+
 // .statics is for model methods where as .methods is for intstance methods
 UserSchema.statics.findByToken = function (token) {
   let User = this;
