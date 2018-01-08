@@ -4,6 +4,7 @@ const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {User} = require('./../models/user');
 
 const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
@@ -195,4 +196,96 @@ describe('PATCH /todos/:id', () => {
       })
       .end(done);
   });
+});
+
+
+describe('GET /users/me', () => {
+
+  it('should return user if authenticated', (done) => {
+    request(app)
+      .get('/users/me')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .expect((response) => {
+        expect(response.body._id).toBe(users[0]._id.toHexString());
+        expect(response.body.email).toBe(users[0].email);
+      })
+      .end(done);
+  });
+
+  it('should return 401 if not authenticated', (done) => {
+    request(app)
+      .get('/users/me')
+      .expect(401)
+      .expect((response) => {
+        expect(response.body).toEqual({});
+      })
+      .end(done);
+  });
+
+});
+
+
+
+
+describe('POST /users', () => {
+
+  it('should create user', (done) => {
+    let email = 'newblah@example.com';
+    let password = '1234567';
+
+    request(app)
+      .post('/users')
+      .send({email, password})
+      .expect(200)
+      .expect((response) => {
+        expect(response.headers['x-auth']).toBeDefined();
+        expect(response.body._id).toBeDefined();
+        expect(response.body.email).toBe(email);
+      })
+      // .end(done);
+      // or:
+      .end((error) => {
+        if (error) {
+          return done(error);
+        }
+
+        User.findOne({email}).then((user) => {
+          expect(user).toBeDefined();
+          expect(user.password).not.toBe(password);
+          done();
+        }).catch((error) => done(error));
+      });
+  });
+
+  it('should return validation erros if request invalid', (done) => {
+    let email = 'hello';
+
+    request(app)
+      .post('/users')
+      .send({email})
+      .expect(400)
+      .end(done);
+  });
+
+  it('should not create user if email already used', (done) => {
+    let email = users[0].email;
+    let password = '1234567';
+
+    request(app)
+      .post('/users')
+      .send({email, password})
+      .expect(400)
+      .end((error) => {
+        if (error) {
+          return done(error);
+        }
+
+        User.find().then((users) => {
+          expect(users.length).toBe(2);
+          done();
+        }).catch((error) => done(error));
+      });
+  });
+
 });
