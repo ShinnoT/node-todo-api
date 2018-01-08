@@ -5,35 +5,21 @@ const {ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
-todos = [{
-  _id: new ObjectID(),
-  text: "first test todo"
-}, {
-  _id: new ObjectID(),
-  text: "second test todo",
-  completed: true,
-  completedAt: 123
-}];
+
 
 
 //however in our test we assume that there is nothing in the DB
 //most of the time there will actually be data in DB
 //so we must run:
-beforeEach((done) => {
-  Todo.remove({}).then(() => {
-    // console.log('removed everything from DB before test');
-    // now however we include test todos (seeds)
-    return Todo.insertMany(todos);
-  }).then(() => {
-    // chaining commands here because returning todos up there
-    done();
-  });
-});
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 //this says: before each test remove everything and add the two seeds
 
-describe('POST /todos', () => {
 
+
+describe('POST /todos', () => {
 
   it('should create a new todo', (done) => {
     let text = 'test todo text';
@@ -60,7 +46,6 @@ describe('POST /todos', () => {
   });
 
 
-
   it('should not create a new todo if bad data passed', (done) => {
     let badText = '';
 
@@ -81,7 +66,6 @@ describe('POST /todos', () => {
         });
       });
   });
-
 
 });
 
