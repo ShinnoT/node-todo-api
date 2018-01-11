@@ -370,6 +370,11 @@ describe('POST /users/login', () => {
         User.findById(users[1]._id).then((user) => {
           expect(user.tokens[1].access).toBe('auth');
           expect(user.tokens[1].token).toBe(response.headers['x-auth']);
+          //or you can do:
+          // expect(user.toObject().tokens[1]).toMatchObject({
+          //   access: 'auth',
+          //   token: response.headers['x-auth']
+          // });
           done();
         }).catch((error) => done(error));
       });
